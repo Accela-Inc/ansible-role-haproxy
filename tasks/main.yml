@@ -18,11 +18,11 @@
 
 - name: Set HAProxy version.
   set_fact:
-    haproxy_version: "{{ '1.5' if '1.5.' in haproxy_version_result.stdout else '1.4' }}"
+    haproxy_version: '{{ haproxy_version_result.stdout_lines[0] | regex_replace("^HA-?Proxy version (\d+(\.\d+)*).*$", "\1") }}'
 
 - name: Copy HAProxy configuration in place.
   template:
-    src: haproxy.cfg.j2
+    src: '{{ haproxy_template }}'
     dest: /etc/haproxy/haproxy.cfg
     mode: 0644
     validate: haproxy -f %s -c -q
